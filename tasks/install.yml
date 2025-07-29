@@ -1,24 +1,32 @@
 ---
 # Install tasks for Fluent Bit
 
+- name: Create keyring directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+  when: ansible_os_family == "Debian"
+
 - name: Add Fluent Bit GPG key
-  ansible.builtin.apt_key:
+  ansible.builtin.get_url:
     url: https://packages.fluentbit.io/fluentbit.key
-    state: present
+    dest: /etc/apt/keyrings/fluentbit.asc
+    mode: '0644'
   when: ansible_os_family == "Debian"
 
 - name: Add Fluent Bit repository (Ubuntu)
   ansible.builtin.apt_repository:
-    repo: "deb https://packages.fluentbit.io/ubuntu/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main"
+    repo: "deb [signed-by=/etc/apt/keyrings/fluentbit.asc] https://packages.fluentbit.io/ubuntu/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main"
     state: present
-    update_cache: yes
+    update_cache: true
   when: ansible_distribution == "Ubuntu"
 
 - name: Add Fluent Bit repository (Debian)
   ansible.builtin.apt_repository:
-    repo: "deb https://packages.fluentbit.io/debian/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main"
+    repo: "deb [signed-by=/etc/apt/keyrings/fluentbit.asc] https://packages.fluentbit.io/debian/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main"
     state: present
-    update_cache: yes
+    update_cache: true
   when: ansible_distribution == "Debian"
 
 - name: Install Fluent Bit package
@@ -29,5 +37,4 @@
 - name: Ensure Fluent Bit service is enabled
   ansible.builtin.systemd:
     name: fluent-bit
-    enabled: yes
-    daemon_reload: yes
+    enabled: true

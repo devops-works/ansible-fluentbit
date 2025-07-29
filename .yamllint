@@ -1,0 +1,36 @@
+---
+# yamllint configuration
+extends: default
+
+rules:
+  # Disable line length checks
+  line-length: disable
+  # Keep other useful rules
+  braces:
+    max-spaces-inside: 1
+    level: error
+  brackets:
+    max-spaces-inside: 1
+    level: error
+  colons:
+    max-spaces-after: -1
+    level: error
+  commas:
+    max-spaces-after: -1
+    level: error
+  comments: disable
+  comments-indentation: disable
+  document-start: disable
+  empty-lines:
+    max-end: 3
+    level: error
+  indentation:
+    spaces: consistent
+    indent-sequences: true
+    check-multi-line-strings: false
+  key-duplicates: enable
+  new-line-at-end-of-file: enable
+  trailing-spaces: enable
+  truthy:
+    allowed-values: ['true', 'false']
+    check-keys: false

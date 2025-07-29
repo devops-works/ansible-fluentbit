@@ -1,19 +1,15 @@
 ---
 # tasks file for ansible-fluentbit
 
-- name: Debug fluentbit_enabled variable
-  debug:
-    var: fluentbit_enabled
-
 - name: Include install tasks
-  include_tasks: install.yml
+  ansible.builtin.include_tasks: install.yml
   when: fluentbit_enabled | default(false)
   tags:
     - fluentbit
     - always
 
 - name: Include configure tasks
-  include_tasks: configure.yml
+  ansible.builtin.include_tasks: configure.yml
   when: fluentbit_enabled | default(false)
   tags:
     - fluentbit

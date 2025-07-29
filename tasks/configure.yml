@@ -24,7 +24,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: restart fluent-bit
+  notify: Restart fluent-bit
 
 - name: Generate Fluent Bit main configuration
   ansible.builtin.template:
@@ -34,11 +34,10 @@
     group: root
     mode: '0644'
     backup: yes
-  notify: restart fluent-bit
+  notify: Restart fluent-bit
 
 - name: Start and enable Fluent Bit service
   ansible.builtin.systemd:
     name: fluent-bit
     state: started
-    enabled: yes
-    daemon_reload: yes
+    enabled: true

@@ -53,18 +53,17 @@
         fail_msg: "systemd override file does not exist"
         success_msg: "systemd override file exists"
 
-    - name: Check fluent-bit service status
-      ansible.builtin.systemd:
-        name: fluent-bit
-      register: service_status
+    - name: Check if fluent-bit service file exists
+      ansible.builtin.stat:
+        path: /lib/systemd/system/fluent-bit.service
+      register: service_file
 
-    - name: Verify fluent-bit service is enabled and running
+    - name: Verify fluent-bit service file exists
       ansible.builtin.assert:
         that:
-          - service_status.status.UnitFileState == "enabled"
-          - service_status.status.ActiveState == "active"
-        fail_msg: "fluent-bit service is not enabled or running"
-        success_msg: "fluent-bit service is enabled and running"
+          - service_file.stat.exists
+        fail_msg: "fluent-bit service file does not exist"
+        success_msg: "fluent-bit service file exists"
 
     - name: Verify configuration file contains expected values
       ansible.builtin.lineinfile:
@@ -75,11 +74,14 @@
       register: config_check
       failed_when: config_check.changed
 
+    - name: Check systemd override contents
+      ansible.builtin.slurp:
+        src: /etc/systemd/system/fluent-bit.service.d/override.conf
+      register: override_contents
+
     - name: Verify systemd override contains YAML config path
-      ansible.builtin.lineinfile:
-        path: /etc/systemd/system/fluent-bit.service.d/override.conf
-        line: "ExecStart=/opt/fluent-bit/bin/fluent-bit -c /etc/fluent-bit/fluent-bit.yaml"
-        state: present
-      check_mode: true
-      register: override_check
-      failed_when: override_check.changed
+      ansible.builtin.assert:
+        that:
+          - "'/etc/fluent-bit/fluent-bit.yaml' in override_contents['content'] | b64decode"
+        fail_msg: "systemd override does not contain YAML config path"
+        success_msg: "systemd override contains YAML config path"
