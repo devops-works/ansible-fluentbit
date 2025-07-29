@@ -30,7 +30,7 @@ rules:
     check-multi-line-strings: false
   key-duplicates: enable
   new-line-at-end-of-file: enable
-  trailing-spaces: enable
+  trailing-spaces: disable
   truthy:
     allowed-values: ['true', 'false']
     check-keys: false

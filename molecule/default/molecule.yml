@@ -4,6 +4,8 @@ dependency:
 
 driver:
   name: docker
+  options:
+    docker_host: unix:///var/run/docker.sock
 
 platforms:
   - name: systemd-ubuntu-24.04
