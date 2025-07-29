@@ -38,4 +38,3 @@
   ansible.builtin.systemd:
     name: fluent-bit
     enabled: true
-  ignore_errors: true
