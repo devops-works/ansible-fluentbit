@@ -208,6 +208,12 @@ This role was created by devops.works.
 
 ## Changelog
 
+### 0.0.2
+
+- Add ignore_errors conditionals for systemd tasks when running under Molecule/containers
+- Configure ansible-lint to skip ignore-errors rule for containerized testing environments
+- Improve reliability of role execution in Docker/Podman containers
+
 ### 0.0.1
 
 - Initial release
