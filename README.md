@@ -14,7 +14,7 @@ The role does not configure any inputs, parsers, outputs, ... it only sets up th
 service and allows you to manage the Fluent Bit service using Ansible.
 
 You need to provide your own configuration files in the
-`/etc/fluent-bit/conf.d/`. The suggested layout is described in the 
+`/etc/fluent-bit/conf.d/`. The suggested layout is described in the
 [Suggested Layout](#suggested-layout) section below.
 
 ## Requirements
@@ -36,7 +36,7 @@ You need to provide your own configuration files in the
 
 ### Service Configuration
 
-All service configuration variables correspond to Fluent Bit's 
+All service configuration variables correspond to Fluent Bit's
 [service section parameters](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/yaml/service-section).
 
 | Variable                            | Type    | Default       | Description                                                                                  |
@@ -55,7 +55,7 @@ None.
 
 ## Example Playbook
 
-### Basic usage with default settings:
+### Basic usage with default settings
 
 ```yaml
 - hosts: servers
@@ -64,7 +64,7 @@ None.
     - devopsworks.fluentbit
 ```
 
-### Custom configuration:
+### Custom configuration
 
 ```yaml
 - hosts: servers
@@ -103,9 +103,10 @@ You can organize your Fluent Bit configuration files in the
 - full pipelines are prefixed with `90_`
 
 Note that:
-  - fluent-bit does not support multiple pipelines in a single configuration
-    file, so each pipeline should be in its own file.
-  - fluent-bit merges all pipelines into one
+
+- fluent-bit does not support multiple pipelines in a single configuration
+  file, so each pipeline should be in its own file.
+- fluent-bit merges all pipelines into one
 
 So the layout looks like:
 
@@ -138,6 +139,7 @@ make lint
 ```
 
 This runs:
+
 - `ansible-lint` for Ansible best practices
 - `yamllint` for YAML formatting
 - `markdownlint` for Markdown files
@@ -151,6 +153,7 @@ make test
 ```
 
 This tests the role against:
+
 - Ubuntu 24.04
 - Debian 11
 - Debian 12
@@ -192,7 +195,7 @@ MIT
 
 ## Author Information
 
-This role was created by Michel BLANC at devops.works.
+This role was created by devops.works.
 
 ## Contributing
 
@@ -206,6 +209,7 @@ This role was created by Michel BLANC at devops.works.
 ## Changelog
 
 ### v1.0.0
+
 - Initial release
 - Support for Ubuntu and Debian
 - YAML configuration support
