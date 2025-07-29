@@ -208,10 +208,17 @@ This role was created by devops.works.
 
 ## Changelog
 
-### v1.0.0
+### 0.0.1
 
 - Initial release
 - Support for Ubuntu and Debian
 - YAML configuration support
 - systemd service override
 - Molecule testing framework
+- Fix: Update molecule configuration for improved platform setup
+- Fix: Update Fluent Bit handlers and tasks for improved service management and configuration
+- Fix: Remove ignore_errors from Fluent Bit service enable task for improved error handling
+- Fix: Remove ignore_errors from Fluent Bit handlers and tasks for improved error handling
+- Switch molecule from Docker to Podman driver
+- Fix Podman molecule tmpfs configuration syntax
+- Improve CI Docker setup and configuration
