@@ -208,6 +208,10 @@ This role was created by devops.works.
 
 ## Changelog
 
+### 0.0.3
+
+- Fix: Refactor include_tasks syntax for clarity and consistency in fluentbit tasks
+
 ### 0.0.2
 
 - Add ignore_errors conditionals for systemd tasks when running under Molecule/containers
