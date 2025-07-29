@@ -1,1 +1,7 @@
 .claude/
+
+# Molecule
+.molecule/
+.cache/
+*.pyc
+__pycache__/

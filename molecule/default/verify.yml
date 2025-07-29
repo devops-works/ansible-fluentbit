@@ -1,0 +1,85 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Check if fluent-bit package is installed
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Verify fluent-bit package is installed
+      ansible.builtin.assert:
+        that:
+          - "'fluent-bit' in ansible_facts.packages"
+        fail_msg: "fluent-bit package is not installed"
+        success_msg: "fluent-bit package is installed"
+
+    - name: Check if fluent-bit configuration file exists
+      ansible.builtin.stat:
+        path: /etc/fluent-bit/fluent-bit.yaml
+      register: config_file
+
+    - name: Verify fluent-bit configuration file exists
+      ansible.builtin.assert:
+        that:
+          - config_file.stat.exists
+        fail_msg: "fluent-bit configuration file does not exist"
+        success_msg: "fluent-bit configuration file exists"
+
+    - name: Check if systemd override directory exists
+      ansible.builtin.stat:
+        path: /etc/systemd/system/fluent-bit.service.d
+      register: override_dir
+
+    - name: Verify systemd override directory exists
+      ansible.builtin.assert:
+        that:
+          - override_dir.stat.exists
+          - override_dir.stat.isdir
+        fail_msg: "systemd override directory does not exist"
+        success_msg: "systemd override directory exists"
+
+    - name: Check if systemd override file exists
+      ansible.builtin.stat:
+        path: /etc/systemd/system/fluent-bit.service.d/override.conf
+      register: override_file
+
+    - name: Verify systemd override file exists
+      ansible.builtin.assert:
+        that:
+          - override_file.stat.exists
+        fail_msg: "systemd override file does not exist"
+        success_msg: "systemd override file exists"
+
+    - name: Check fluent-bit service status
+      ansible.builtin.systemd:
+        name: fluent-bit
+      register: service_status
+
+    - name: Verify fluent-bit service is enabled and running
+      ansible.builtin.assert:
+        that:
+          - service_status.status.UnitFileState == "enabled"
+          - service_status.status.ActiveState == "active"
+        fail_msg: "fluent-bit service is not enabled or running"
+        success_msg: "fluent-bit service is enabled and running"
+
+    - name: Verify configuration file contains expected values
+      ansible.builtin.lineinfile:
+        path: /etc/fluent-bit/fluent-bit.yaml
+        line: "  flush: 1"
+        state: present
+      check_mode: true
+      register: config_check
+      failed_when: config_check.changed
+
+    - name: Verify systemd override contains YAML config path
+      ansible.builtin.lineinfile:
+        path: /etc/systemd/system/fluent-bit.service.d/override.conf
+        line: "ExecStart=/opt/fluent-bit/bin/fluent-bit -c /etc/fluent-bit/fluent-bit.yaml"
+        state: present
+      check_mode: true
+      register: override_check
+      failed_when: override_check.changed
