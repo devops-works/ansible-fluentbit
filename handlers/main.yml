@@ -4,5 +4,6 @@
 - name: Restart fluent-bit
   ansible.builtin.systemd:
     name: fluent-bit
-    state: restarted
+    state: restarted  
   listen: "Restart fluent-bit"
+  ignore_errors: "{{ ansible_virtualization_type == 'podman' or ansible_virtualization_type == 'docker' }}"
