@@ -24,7 +24,14 @@
     owner: root
     group: root
     mode: '0644'
-  notify: Restart fluent-bit
+  register: __fluentbit_service_override
+  notify:
+    - Restart fluent-bit
+
+- name: Reload systemd daemon if needed
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: __fluentbit_service_override.changed
 
 - name: Generate Fluent Bit main configuration
   ansible.builtin.template:
