@@ -5,5 +5,4 @@
   ansible.builtin.systemd:
     name: fluent-bit
     state: restarted
-  listen: "restart fluent-bit"
-  ignore_errors: true
+  listen: "Restart fluent-bit"
