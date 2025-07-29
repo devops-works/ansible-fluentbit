@@ -2,16 +2,21 @@
 # tasks file for ansible-fluentbit
 
 - name: Include install tasks
-  ansible.builtin.include_tasks: install.yml
-  when: fluentbit_enabled | default(false)
+  ansible.builtin.include_tasks:
+    file: install.yml
+    apply:
+      tags:
+        - fluentbit
   tags:
-    - fluentbit
     - always
+  when: fluentbit_enabled | default(false)
 
 - name: Include configure tasks
-  ansible.builtin.include_tasks: configure.yml
-  when: fluentbit_enabled | default(false)
+  ansible.builtin.include_tasks:
+    file: configure.yml
+    apply:
+      tags:
+        - fluentbit
   tags:
-    - fluentbit
-    - fluentbit:configure
     - always
+  when: fluentbit_enabled | default(false)
