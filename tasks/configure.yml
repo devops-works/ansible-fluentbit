@@ -9,6 +9,14 @@
     group: root
     mode: '0755'
 
+- name: Create empty dummy configuration file to ensure Fluent Bit starts
+  ansible.builtin.copy:
+    content: ""
+    dest: /etc/fluent-bit/conf.d/00_dummy.yaml
+    owner: root
+    group: root
+    mode: '0644'
+
 - name: Create systemd override directory for fluent-bit
   ansible.builtin.file:
     path: /etc/systemd/system/fluent-bit.service.d

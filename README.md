@@ -208,6 +208,11 @@ This role was created by devops.works.
 
 ## Changelog
 
+### 0.0.4
+
+- Add empty dummy configuration file to ensure Fluent Bit starts properly
+- Add CLAUDE.md file for enhanced Claude Code development experience
+
 ### 0.0.3
 
 - Fix: Refactor include_tasks syntax for clarity and consistency in fluentbit tasks
