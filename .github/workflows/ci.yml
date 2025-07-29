@@ -63,16 +63,17 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install ansible molecule molecule-plugins[docker] docker
 
-      - name: Start Docker service
-        run: |
-          sudo systemctl start docker
-          sudo chmod 666 /var/run/docker.sock
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
 
       - name: Run molecule tests
         run: molecule test
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
+          DOCKER_API_VERSION: '1.41'
 
   integration:
     name: Integration Test
@@ -94,13 +95,14 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install ansible molecule molecule-plugins[docker] docker
 
-      - name: Start Docker service
-        run: |
-          sudo systemctl start docker
-          sudo chmod 666 /var/run/docker.sock
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
 
       - name: Run full integration tests
         run: molecule test
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
+          DOCKER_API_VERSION: '1.41'
