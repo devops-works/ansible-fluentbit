@@ -1,0 +1,57 @@
+---
+name: Scheduled Tests
+
+on:
+  schedule:
+    # Run tests every Sunday at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  scheduled-test:
+    name: Scheduled Integration Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install ansible molecule molecule-plugins[docker] docker
+
+      - name: Run molecule tests
+        run: molecule test
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+
+      - name: Create Issue on Failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Scheduled Test Failure - ' + new Date().toISOString().split('T')[0],
+              body: `## Scheduled Test Failure
+
+            The scheduled integration tests have failed on ${new Date().toISOString().split('T')[0]}.
+
+            **Workflow Run:** [${context.runId}](${context.payload.repository.html_url}/actions/runs/${context.runId})
+
+            Please investigate the following:
+            - Check if there are any changes in the Fluent Bit repository or packages
+            - Verify if the base container images have been updated
+            - Review the test logs for specific failure details
+
+            This issue was automatically created by the scheduled workflow.`,
+              labels: ['bug', 'scheduled-test', 'needs-investigation']
+            })
