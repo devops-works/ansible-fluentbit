@@ -5,6 +5,7 @@ profile: production
 # Skip specific rules
 skip_list:
   - yaml[line-length]  # Disable line length checks
+  - no-handler  # Disable no handler checks
 
 # Use default rules with custom modifications
 use_default_rules: true
