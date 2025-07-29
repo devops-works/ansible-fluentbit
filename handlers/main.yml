@@ -6,3 +6,4 @@
     name: fluent-bit
     state: restarted
   listen: "Restart fluent-bit"
+  ignore_errors: true

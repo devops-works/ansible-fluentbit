@@ -16,6 +16,7 @@
     owner: root
     group: root
     mode: '0755'
+  ignore_errors: true
 
 - name: Create systemd override to use YAML config
   ansible.builtin.template:
@@ -25,6 +26,7 @@
     group: root
     mode: '0644'
   notify: Restart fluent-bit
+  ignore_errors: true
 
 - name: Generate Fluent Bit main configuration
   ansible.builtin.template:
@@ -41,3 +43,4 @@
     name: fluent-bit
     state: started
     enabled: true
+  ignore_errors: true

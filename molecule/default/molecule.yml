@@ -7,35 +7,23 @@ driver:
 
 platforms:
   - name: systemd-ubuntu-24.04
-    image: jrei/systemd-ubuntu:24.04
-    command: /sbin/init
+    image: ubuntu:24.04
+    command: sleep infinity
     privileged: true
-    systemd: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    tmpfs:
-      /run: noexec,nosuid,size=100m
-      /tmp: noexec,nosuid,size=100m
   - name: systemd-debian-11
-    image: jrei/systemd-debian:11
-    command: /sbin/init
+    image: debian:11
+    command: sleep infinity
     privileged: true
-    systemd: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    tmpfs:
-      /run: noexec,nosuid,size=100m
-      /tmp: noexec,nosuid,size=100m
   - name: systemd-debian-12
-    image: jrei/systemd-debian:12
-    command: /sbin/init
+    image: debian:12
+    command: sleep infinity
     privileged: true
-    systemd: true
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    tmpfs:
-      /run: noexec,nosuid,size=100m
-      /tmp: noexec,nosuid,size=100m
 
 provisioner:
   name: ansible
