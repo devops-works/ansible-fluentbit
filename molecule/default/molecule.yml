@@ -16,6 +16,7 @@ platforms:
     tmpfs:
       - /run
       - /tmp
+    docker_host: unix://var/run/docker.sock
   - name: systemd-debian-11
     image: jrei/systemd-debian:11
     command: /sbin/init
@@ -26,6 +27,7 @@ platforms:
     tmpfs:
       - /run
       - /tmp
+    docker_host: unix://var/run/docker.sock
   - name: systemd-debian-12
     image: jrei/systemd-debian:12
     command: /sbin/init
@@ -36,6 +38,7 @@ platforms:
     tmpfs:
       - /run
       - /tmp
+    docker_host: unix://var/run/docker.sock
 
 provisioner:
   name: ansible
