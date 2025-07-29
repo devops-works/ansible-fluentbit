@@ -1,0 +1,44 @@
+---
+# Configuration tasks for Fluent Bit
+
+- name: Create Fluent Bit configuration directory
+  ansible.builtin.file:
+    path: /etc/fluent-bit/conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create systemd override directory for fluent-bit
+  ansible.builtin.file:
+    path: /etc/systemd/system/fluent-bit.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create systemd override to use YAML config
+  ansible.builtin.template:
+    src: fluent-bit.service.override.j2
+    dest: /etc/systemd/system/fluent-bit.service.d/override.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart fluent-bit
+
+- name: Generate Fluent Bit main configuration
+  ansible.builtin.template:
+    src: fluent-bit.yaml.j2
+    dest: /etc/fluent-bit/fluent-bit.yaml
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  notify: restart fluent-bit
+
+- name: Start and enable Fluent Bit service
+  ansible.builtin.systemd:
+    name: fluent-bit
+    state: started
+    enabled: yes
+    daemon_reload: yes

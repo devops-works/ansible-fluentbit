@@ -1,0 +1,13 @@
+---
+includes:
+  - /etc/fluent-bit/conf.d/*.yaml
+
+# https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/yaml/service-section
+service:
+  flush: {{ fluentbit_service_flush }}
+  daemon: {{ fluentbit_service_daemon }}
+  log_level: {{ fluentbit_service_log_level }}
+  http_server: {{ fluentbit_service_http_server }}
+  http_listen: {{ fluentbit_service_http_listen }}
+  http_port: {{ fluentbit_service_http_port }}
+  storage.metrics: {{ fluentbit_service_storage_metrics }}

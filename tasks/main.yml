@@ -1,0 +1,18 @@
+---
+# tasks file for ansible-fluentbit
+---
+- include_tasks:
+    file: install.yml
+    apply:
+      tags: ["fluentbit"]
+  when: fluentbit_enabled
+  tags:
+    - always
+
+- include_tasks:
+    file: configure.yml
+    apply:
+      tags: ["fluentbit","fluentbit:configure"]
+  when: fluentbit_enabled
+  tags:
+    - always

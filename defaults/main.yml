@@ -1,0 +1,14 @@
+---
+# defaults file for ansible-fluentbit
+
+# Role configuration
+fluentbit_enabled: true
+
+# Fluent Bit service configuration
+fluentbit_service_flush: 1
+fluentbit_service_daemon: "Off"
+fluentbit_service_log_level: "info"
+fluentbit_service_http_server: "off"
+fluentbit_service_http_listen: "127.0.0.1"
+fluentbit_service_http_port: 2020
+fluentbit_service_storage_metrics: "on"

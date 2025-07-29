@@ -1,0 +1,33 @@
+---
+# Install tasks for Fluent Bit
+
+- name: Add Fluent Bit GPG key
+  ansible.builtin.apt_key:
+    url: https://packages.fluentbit.io/fluentbit.key
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Add Fluent Bit repository (Ubuntu)
+  ansible.builtin.apt_repository:
+    repo: "deb https://packages.fluentbit.io/ubuntu/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main"
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Add Fluent Bit repository (Debian)
+  ansible.builtin.apt_repository:
+    repo: "deb https://packages.fluentbit.io/debian/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main"
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Debian"
+
+- name: Install Fluent Bit package
+  ansible.builtin.package:
+    name: fluent-bit
+    state: present
+
+- name: Ensure Fluent Bit service is enabled
+  ansible.builtin.systemd:
+    name: fluent-bit
+    enabled: yes
+    daemon_reload: yes
