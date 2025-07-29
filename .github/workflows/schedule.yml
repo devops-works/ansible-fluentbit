@@ -26,6 +26,12 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install ansible molecule molecule-plugins[docker] docker
 
+      - name: Start Docker daemon
+        run: |
+          sudo systemctl start docker
+          sudo systemctl enable docker
+          sudo usermod -aG docker $USER
+
       - name: Run molecule tests
         run: molecule test
         env:
