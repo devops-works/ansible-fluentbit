@@ -6,6 +6,7 @@ profile: production
 skip_list:
   - yaml[line-length]  # Disable line length checks
   - no-handler  # Disable no handler checks
+  - ignore-errors  # Allow ignore_errors for systemd tasks in containerized environments
 
 # Use default rules with custom modifications
 use_default_rules: true
