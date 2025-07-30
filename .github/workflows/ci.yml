@@ -40,7 +40,7 @@ jobs:
         run: yamllint .
 
       - name: Run markdownlint
-        run: markdownlint *.md
+        run: markdownlint .
 
   test:
     name: Test

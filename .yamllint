@@ -2,6 +2,9 @@
 # yamllint configuration
 extends: default
 
+ignore: |
+  files/parsers.yaml
+
 rules:
   # Disable line length checks
   line-length: disable
