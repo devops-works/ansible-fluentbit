@@ -22,7 +22,7 @@ lint-yaml:
 lint-markdown:
 	@echo "Running markdownlint..."
 	@if command -v markdownlint >/dev/null 2>&1; then \
-		markdownlint *.md; \
+		markdownlint .; \
 	else \
 		echo "markdownlint not found. Install with: npm install -g markdownlint-cli"; \
 		exit 1; \

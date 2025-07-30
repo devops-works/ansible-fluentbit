@@ -85,3 +85,15 @@
           - "'/etc/fluent-bit/fluent-bit.yaml' in override_contents['content'] | b64decode"
         fail_msg: "systemd override does not contain YAML config path"
         success_msg: "systemd override contains YAML config path"
+
+    - name: Check if parsers configuration file exists
+      ansible.builtin.stat:
+        path: /etc/fluent-bit/conf.d/20_parsers.yaml
+      register: parsers_file
+
+    - name: Verify parsers configuration file exists
+      ansible.builtin.assert:
+        that:
+          - parsers_file.stat.exists
+        fail_msg: "parsers configuration file does not exist"
+        success_msg: "parsers configuration file exists"
