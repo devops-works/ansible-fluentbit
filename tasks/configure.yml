@@ -9,10 +9,10 @@
     group: root
     mode: '0755'
 
-- name: Create empty dummy configuration file to ensure Fluent Bit starts
+- name: Add stock parser file for Fluent Bit
   ansible.builtin.copy:
-    content: ""
-    dest: /etc/fluent-bit/conf.d/00_dummy.yaml
+    src: parsers.yaml
+    dest: /etc/fluent-bit/conf.d/20_parsers.yaml
     owner: root
     group: root
     mode: '0644'
