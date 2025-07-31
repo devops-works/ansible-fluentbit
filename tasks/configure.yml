@@ -52,6 +52,16 @@
     backup: true
   notify: Restart fluent-bit
 
+- name: Remove old-style configurations
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  notify: Restart fluent-bit
+  loop:
+    - /etc/fluent-bit/fluent-bit.conf
+    - /etc/fluent-bit/parsers.conf
+    - /etc/fluent-bit/plugins.conf
+
 - name: Start and enable Fluent Bit service
   ansible.builtin.systemd:
     name: fluent-bit
