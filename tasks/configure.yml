@@ -12,7 +12,7 @@
 - name: Add stock parser file for Fluent Bit
   ansible.builtin.copy:
     src: parsers.yaml
-    dest: /etc/fluent-bit/conf.d/20_parsers.yaml
+    dest: /etc/fluent-bit/conf.d/20-parsers.yaml
     owner: root
     group: root
     mode: '0644'

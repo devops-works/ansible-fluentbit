@@ -88,7 +88,7 @@
 
     - name: Check if parsers configuration file exists
       ansible.builtin.stat:
-        path: /etc/fluent-bit/conf.d/20_parsers.yaml
+        path: /etc/fluent-bit/conf.d/20-parsers.yaml
       register: parsers_file
 
     - name: Verify parsers configuration file exists

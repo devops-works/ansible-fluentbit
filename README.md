@@ -114,9 +114,9 @@ So the layout looks like:
 ├── 2x-parsers.yaml
 ├── 3x-inputs.yaml
 ├── 4x-filters.yaml
-├── 5x-outputs.yaml
-├── 90_pipeline.yaml
-└── 90_pipeline2.yaml
+├── 5x-pipeline.yaml
+├── 90_output.yaml
+└── 90_output2.yaml
 ```
 
 ## Service Management
