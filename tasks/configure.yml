@@ -76,7 +76,7 @@
 
     - name: Extract GeoLite2 City archive
       ansible.builtin.unarchive:
-        src: "{{ fluentbit_geoip_tmp.path }}/GeoLite2-City.tar.gz"
+        src: "{{ __fluentbit_geoip_tmp.path }}/GeoLite2-City.tar.gz"
         dest: "{{ __fluentbit_geoip_tmp.path }}"
         remote_src: true
 
@@ -104,7 +104,7 @@
   always:
     - name: Cleanup GeoIP temporary directory
       ansible.builtin.file:
-        path: "{{ fluentbit_geoip_tmp.path }}"
+        path: "{{ __fluentbit_geoip_tmp.path }}"
         state: absent
       when: __fluentbit_geoip_tmp is defined
 
