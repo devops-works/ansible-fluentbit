@@ -49,6 +49,16 @@ All service configuration variables correspond to Fluent Bit's
 | `fluentbit_service_http_port`       | integer | `2020`        | Set TCP port for the HTTP server when enabled                                                |
 | `fluentbit_service_storage_metrics` | string  | `"on"`        | Enable storage layer metrics. Allowed values: on, off                                        |
 
+### GeoIP Database
+
+| Variable                          | Type   | Default | Description                                                                 |
+| --------------------------------- | ------ | ------- | --------------------------------------------------------------------------- |
+| `fluentbit_geoip_account_id`      | string | `null`  | MaxMind account ID used to authenticate GeoLite2 downloads (optional)       |
+| `fluentbit_geoip_license_key`     | string | `null`  | MaxMind license key used with the account ID for GeoLite2 downloads         |
+
+When both variables are provided, the role downloads the latest GeoLite2 City
+database from MaxMind and installs `GeoLite2-City.mmdb` into `/etc/fluent-bit/`.
+
 ## Dependencies
 
 None.
@@ -85,6 +95,7 @@ The role creates the following files:
 - `/etc/fluent-bit/fluent-bit.yaml` - Main YAML configuration file
 - `/etc/fluent-bit/conf.d/` - Directory for additional configuration files
 - `/etc/systemd/system/fluent-bit.service.d/override.conf` - systemd override to use YAML config
+- `/etc/fluent-bit/GeoLite2-City.mmdb` - GeoIP database (when GeoIP variables are set)
 
 ## Suggested Layout
 

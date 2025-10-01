@@ -12,3 +12,7 @@ fluentbit_service_http_server: "off"
 fluentbit_service_http_listen: "127.0.0.1"
 fluentbit_service_http_port: 2020
 fluentbit_service_storage_metrics: "on"
+
+# MaxMind GeoIP configuration
+fluentbit_geoip_account_id: null
+fluentbit_geoip_license_key: null

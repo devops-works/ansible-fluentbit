@@ -52,6 +52,62 @@
     backup: true
   notify: Restart fluent-bit
 
+- name: Install GeoLite2 City database
+  when:
+    - (fluentbit_geoip_account_id | default('')) | length > 0
+    - (fluentbit_geoip_license_key | default('')) | length > 0
+  block:
+    - name: Create temporary directory for GeoIP download
+      ansible.builtin.tempfile:
+        state: directory
+        prefix: fluentbit-geoip-
+      register: __fluentbit_geoip_tmp
+
+    - name: Download GeoLite2 City archive
+      ansible.builtin.get_url:
+        url: https://download.maxmind.com/geoip/databases/GeoLite2-City/download?suffix=tar.gz
+        dest: "{{ __fluentbit_geoip_tmp.path }}/GeoLite2-City.tar.gz"
+        mode: '0600'
+        force: true
+        force_basic_auth: true
+        url_username: "{{ fluentbit_geoip_account_id }}"
+        url_password: "{{ fluentbit_geoip_license_key }}"
+      no_log: true
+
+    - name: Extract GeoLite2 City archive
+      ansible.builtin.unarchive:
+        src: "{{ fluentbit_geoip_tmp.path }}/GeoLite2-City.tar.gz"
+        dest: "{{ __fluentbit_geoip_tmp.path }}"
+        remote_src: true
+
+    - name: Locate GeoLite2 City database file
+      ansible.builtin.find:
+        paths: "{{ __fluentbit_geoip_tmp.path }}"
+        patterns: GeoLite2-City.mmdb
+        recurse: true
+      register: __fluentbit_geoip_found
+
+    - name: Ensure GeoLite2 City database was extracted
+      ansible.builtin.fail:
+        msg: GeoLite2-City.mmdb not found in downloaded archive
+      when: __fluentbit_geoip_found.files | length == 0
+
+    - name: Install GeoLite2 City database
+      ansible.builtin.copy:
+        src: "{{ fluentbit_geoip_found.files[0].path }}"
+        dest: /etc/fluent-bit/GeoLite2-City.mmdb
+        owner: root
+        group: root
+        mode: '0644'
+        remote_src: true
+      notify: Restart fluent-bit
+  always:
+    - name: Cleanup GeoIP temporary directory
+      ansible.builtin.file:
+        path: "{{ fluentbit_geoip_tmp.path }}"
+        state: absent
+      when: __fluentbit_geoip_tmp is defined
+
 - name: Remove old-style configurations
   ansible.builtin.file:
     path: "{{ item }}"
