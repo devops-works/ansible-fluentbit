@@ -108,7 +108,7 @@
         state: absent
       when:
         - __fluentbit_geoip_tmp is defined
-        - 'path' in __fluentbit_geoip_tmp
+        - "'path' in __fluentbit_geoip_tmp"
 
 - name: Remove old-style configurations
   ansible.builtin.file:
