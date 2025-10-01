@@ -66,14 +66,9 @@
 
     - name: Download GeoLite2 City archive
       ansible.builtin.get_url:
-        url: https://download.maxmind.com/geoip/databases/GeoLite2-City/download?suffix=tar.gz
+        url: "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&account_id={{ fluentbit_geoip_account_id | string | urlencode }}&license_key={{ fluentbit_geoip_license_key | string | urlencode }}&suffix=tar.gz"
         dest: "{{ __fluentbit_geoip_tmp.path }}/GeoLite2-City.tar.gz"
         mode: '0600'
-        force: true
-        force_basic_auth: true
-        url_username: "{{ fluentbit_geoip_account_id }}"
-        url_password: "{{ fluentbit_geoip_license_key }}"
-      no_log: true
 
     - name: Extract GeoLite2 City archive
       ansible.builtin.unarchive:
@@ -111,6 +106,11 @@
         - __fluentbit_geoip_tmp is defined
         - __fluentbit_geoip_tmp.path is defined
       check_mode: false
+
+    - name: Clear GeoIP download URL fact
+      ansible.builtin.set_fact:
+        __fluentbit_geoip_download_url: null
+      no_log: true
 
 - name: Remove old-style configurations
   ansible.builtin.file:
