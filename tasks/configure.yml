@@ -54,8 +54,8 @@
 
 - name: Install GeoLite2 City database
   when:
-    - (fluentbit_geoip_account_id | default('')) | length > 0
-    - (fluentbit_geoip_license_key | default('')) | length > 0
+    - (fluentbit_geoip_account_id | default('', true) | string) | length > 0
+    - (fluentbit_geoip_license_key | default('', true) | string) | length > 0
   block:
     - name: Create temporary directory for GeoIP download
       ansible.builtin.tempfile:
