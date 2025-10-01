@@ -66,7 +66,7 @@
     - name: Download GeoLite2 City archive
       ansible.builtin.get_url:
         url: https://download.maxmind.com/geoip/databases/GeoLite2-City/download?suffix=tar.gz
-        dest: "{{ __fluentbit_geoip_tmp.path }}/GeoLite2-City.tar.gz"
+        dest: "{{ __fluentbit_geoip_tmp['path'] }}/GeoLite2-City.tar.gz"
         mode: '0600'
         force: true
         force_basic_auth: true
@@ -76,13 +76,13 @@
 
     - name: Extract GeoLite2 City archive
       ansible.builtin.unarchive:
-        src: "{{ __fluentbit_geoip_tmp.path }}/GeoLite2-City.tar.gz"
-        dest: "{{ __fluentbit_geoip_tmp.path }}"
+        src: "{{ __fluentbit_geoip_tmp['path'] }}/GeoLite2-City.tar.gz"
+        dest: "{{ __fluentbit_geoip_tmp['path'] }}"
         remote_src: true
 
     - name: Locate GeoLite2 City database file
       ansible.builtin.find:
-        paths: "{{ __fluentbit_geoip_tmp.path }}"
+        paths: "{{ __fluentbit_geoip_tmp['path'] }}"
         patterns: GeoLite2-City.mmdb
         recurse: true
       register: __fluentbit_geoip_found
@@ -90,11 +90,11 @@
     - name: Ensure GeoLite2 City database was extracted
       ansible.builtin.fail:
         msg: GeoLite2-City.mmdb not found in downloaded archive
-      when: __fluentbit_geoip_found.files | length == 0
+      when: __fluentbit_geoip_found['files'] | length == 0
 
     - name: Install GeoLite2 City database
       ansible.builtin.copy:
-        src: "{{ __fluentbit_geoip_found.files[0].path }}"
+        src: "{{ __fluentbit_geoip_found['files'][0]['path'] }}"
         dest: /etc/fluent-bit/GeoLite2-City.mmdb
         owner: root
         group: root
@@ -104,11 +104,11 @@
   always:
     - name: Cleanup GeoIP temporary directory
       ansible.builtin.file:
-        path: "{{ __fluentbit_geoip_tmp.path }}"
+        path: "{{ __fluentbit_geoip_tmp['path'] }}"
         state: absent
       when:
         - __fluentbit_geoip_tmp is defined
-        - __fluentbit_geoip_tmp.path is defined
+        - 'path' in __fluentbit_geoip_tmp
 
 - name: Remove old-style configurations
   ansible.builtin.file:
