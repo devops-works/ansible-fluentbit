@@ -94,7 +94,7 @@
 
     - name: Install GeoLite2 City database
       ansible.builtin.copy:
-        src: "{{ fluentbit_geoip_found.files[0].path }}"
+        src: "{{ __fluentbit_geoip_found.files[0].path }}"
         dest: /etc/fluent-bit/GeoLite2-City.mmdb
         owner: root
         group: root
@@ -106,7 +106,9 @@
       ansible.builtin.file:
         path: "{{ __fluentbit_geoip_tmp.path }}"
         state: absent
-      when: __fluentbit_geoip_tmp is defined
+      when:
+        - __fluentbit_geoip_tmp is defined
+        - __fluentbit_geoip_tmp.path is defined
 
 - name: Remove old-style configurations
   ansible.builtin.file:
