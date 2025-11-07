@@ -66,6 +66,10 @@
       ansible.builtin.set_fact:
         __fluentbit_geoip_age: "{{ ((ansible_date_time.epoch | int) - (__fluentbit_geoip_existing.stat.mtime | int)) if __fluentbit_geoip_existing.stat.exists else 864001 }}"
 
+    - name: Debug database age
+      ansible.builtin.debug:
+        msg: "GeoLite2 City database age is {{ __fluentbit_geoip_age }} seconds"
+
     - name: Download and install GeoLite2 City database
       when: __fluentbit_geoip_age | int > 864000
       block:
