@@ -64,10 +64,10 @@
 
     - name: Calculate database age in seconds
       ansible.builtin.set_fact:
-        __fluentbit_geoip_age: "{{ ((ansible_date_time.epoch | int) - (__fluentbit_geoip_existing.stat.mtime | int)) if __fluentbit_geoip_existing.stat.exists else 86401 }}"
+        __fluentbit_geoip_age: "{{ ((ansible_date_time.epoch | int) - (__fluentbit_geoip_existing.stat.mtime | int)) if __fluentbit_geoip_existing.stat.exists else 864001 }}"
 
     - name: Download and install GeoLite2 City database
-      when: __fluentbit_geoip_age | int > 86400
+      when: __fluentbit_geoip_age | int > 864000
       block:
         - name: Create temporary directory for GeoIP download
           ansible.builtin.tempfile:
@@ -116,8 +116,8 @@
 
     - name: Skip GeoLite2 City database download
       ansible.builtin.debug:
-        msg: "Skipping GeoLite2 City database download - existing database is {{ __fluentbit_geoip_age | int }} seconds old (less than 24 hours)"
-      when: __fluentbit_geoip_age | int <= 86400
+        msg: "Skipping GeoLite2 City database download - existing database is {{ __fluentbit_geoip_age | int }} seconds old (less than 10 days)"
+      when: __fluentbit_geoip_age | int <= 864000
   always:
     - name: Cleanup GeoIP temporary directory
       ansible.builtin.file:
