@@ -57,50 +57,67 @@
     - (fluentbit_geoip_account_id | default('', true) | string) | length > 0
     - (fluentbit_geoip_license_key | default('', true) | string) | length > 0
   block:
-    - name: Create temporary directory for GeoIP download
-      ansible.builtin.tempfile:
-        state: directory
-        prefix: fluentbit-geoip-
-      register: __fluentbit_geoip_tmp
-      check_mode: false
+    - name: Check if GeoLite2 City database exists
+      ansible.builtin.stat:
+        path: /etc/fluent-bit/GeoLite2-City.mmdb
+      register: __fluentbit_geoip_existing
 
-    - name: Download GeoLite2 City archive
-      ansible.builtin.get_url:
-        url: "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&account_id={{ fluentbit_geoip_account_id | string | urlencode }}&license_key={{ fluentbit_geoip_license_key | string | urlencode }}&suffix=tar.gz"
-        dest: "{{ __fluentbit_geoip_tmp.path }}/GeoLite2-City.tar.gz"
-        mode: '0600'
-      check_mode: false
+    - name: Calculate database age in seconds
+      ansible.builtin.set_fact:
+        __fluentbit_geoip_age: "{{ ((ansible_date_time.epoch | int) - (__fluentbit_geoip_existing.stat.mtime | int)) if __fluentbit_geoip_existing.stat.exists else 86401 }}"
 
-    - name: Extract GeoLite2 City archive
-      ansible.builtin.unarchive:
-        src: "{{ __fluentbit_geoip_tmp.path }}/GeoLite2-City.tar.gz"
-        dest: "{{ __fluentbit_geoip_tmp.path }}"
-        remote_src: true
-      check_mode: false
+    - name: Download and install GeoLite2 City database
+      when: __fluentbit_geoip_age | int > 86400
+      block:
+        - name: Create temporary directory for GeoIP download
+          ansible.builtin.tempfile:
+            state: directory
+            prefix: fluentbit-geoip-
+          register: __fluentbit_geoip_tmp
+          check_mode: false
 
-    - name: Locate GeoLite2 City database file
-      ansible.builtin.find:
-        paths: "{{ __fluentbit_geoip_tmp.path }}"
-        patterns: GeoLite2-City.mmdb
-        recurse: true
-      register: __fluentbit_geoip_found
-      check_mode: false
+        - name: Download GeoLite2 City archive
+          ansible.builtin.get_url:
+            url: "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&account_id={{ fluentbit_geoip_account_id | string | urlencode }}&license_key={{ fluentbit_geoip_license_key | string | urlencode }}&suffix=tar.gz"
+            dest: "{{ __fluentbit_geoip_tmp.path }}/GeoLite2-City.tar.gz"
+            mode: '0600'
+          check_mode: false
 
-    - name: Ensure GeoLite2 City database was extracted
-      ansible.builtin.fail:
-        msg: GeoLite2-City.mmdb not found in downloaded archive
-      when: __fluentbit_geoip_found['files'] | length == 0
-      check_mode: false
+        - name: Extract GeoLite2 City archive
+          ansible.builtin.unarchive:
+            src: "{{ __fluentbit_geoip_tmp.path }}/GeoLite2-City.tar.gz"
+            dest: "{{ __fluentbit_geoip_tmp.path }}"
+            remote_src: true
+          check_mode: false
 
-    - name: Install GeoLite2 City database
-      ansible.builtin.copy:
-        src: "{{ __fluentbit_geoip_found['files'][0]['path'] }}"
-        dest: /etc/fluent-bit/GeoLite2-City.mmdb
-        owner: root
-        group: root
-        mode: '0644'
-        remote_src: true
-      notify: Restart fluent-bit
+        - name: Locate GeoLite2 City database file
+          ansible.builtin.find:
+            paths: "{{ __fluentbit_geoip_tmp.path }}"
+            patterns: GeoLite2-City.mmdb
+            recurse: true
+          register: __fluentbit_geoip_found
+          check_mode: false
+
+        - name: Ensure GeoLite2 City database was extracted
+          ansible.builtin.fail:
+            msg: GeoLite2-City.mmdb not found in downloaded archive
+          when: __fluentbit_geoip_found['files'] | length == 0
+          check_mode: false
+
+        - name: Install GeoLite2 City database
+          ansible.builtin.copy:
+            src: "{{ __fluentbit_geoip_found['files'][0]['path'] }}"
+            dest: /etc/fluent-bit/GeoLite2-City.mmdb
+            owner: root
+            group: root
+            mode: '0644'
+            remote_src: true
+          notify: Restart fluent-bit
+
+    - name: Skip GeoLite2 City database download
+      ansible.builtin.debug:
+        msg: "Skipping GeoLite2 City database download - existing database is {{ __fluentbit_geoip_age | int }} seconds old (less than 24 hours)"
+      when: __fluentbit_geoip_age | int <= 86400
   always:
     - name: Cleanup GeoIP temporary directory
       ansible.builtin.file:
