@@ -11,4 +11,4 @@
     name: fluent-bit
     state: restarted  
   listen: "Restart fluent-bit"
-  ignore_errors: "{{ ansible_virtualization_type == 'podman' or ansible_virtualization_type == 'docker' }}"
+  ignore_errors: "{{ ansible_facts['virtualization_type'] == 'podman' or ansible_facts['virtualization_type'] == 'docker' }}"

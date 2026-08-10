@@ -6,41 +6,41 @@
     path: /etc/apt/keyrings
     state: directory
     mode: '0755'
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
 
 - name: Add Fluent Bit GPG key
   ansible.builtin.get_url:
     url: https://packages.fluentbit.io/fluentbit.key
     dest: /etc/apt/keyrings/fluentbit.asc
     mode: '0644'
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
 
 - name: Remove legacy one-line Fluent Bit repository files
   ansible.builtin.file:
-    path: "/etc/apt/sources.list.d/packages_fluentbit_io_{{ item }}_{{ ansible_distribution_release }}.list"
+    path: "/etc/apt/sources.list.d/packages_fluentbit_io_{{ item }}_{{ ansible_facts['distribution_release'] }}.list"
     state: absent
   loop:
     - debian
     - ubuntu
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
   notify: Update apt cache
 
 - name: Install python-debian (required by deb822_repository)
   ansible.builtin.apt:
     name: python3-debian
     state: present
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
 
 - name: Add Fluent Bit repository
   ansible.builtin.deb822_repository:
     name: fluentbit
     types: deb
-    uris: "https://packages.fluentbit.io/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}"
-    suites: "{{ ansible_distribution_release }}"
+    uris: "https://packages.fluentbit.io/{{ ansible_facts['distribution'] | lower }}/{{ ansible_facts['distribution_release'] }}"
+    suites: "{{ ansible_facts['distribution_release'] }}"
     components: main
     signed_by: /etc/apt/keyrings/fluentbit.asc
     state: present
-  when: ansible_distribution in ["Debian", "Ubuntu"]
+  when: ansible_facts['distribution'] in ["Debian", "Ubuntu"]
   notify: Update apt cache
 
 - name: Update apt cache before install
@@ -55,4 +55,4 @@
   ansible.builtin.systemd:
     name: fluent-bit
     enabled: true
-  ignore_errors: "{{ ansible_virtualization_type == 'podman' or ansible_virtualization_type == 'docker' }}"
+  ignore_errors: "{{ ansible_facts['virtualization_type'] == 'podman' or ansible_facts['virtualization_type'] == 'docker' }}"

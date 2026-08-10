@@ -40,7 +40,7 @@
   ansible.builtin.systemd:
     daemon_reload: true
   when: __fluentbit_service_override.changed
-  ignore_errors: "{{ ansible_virtualization_type == 'podman' or ansible_virtualization_type == 'docker' }}"
+  ignore_errors: "{{ ansible_facts['virtualization_type'] == 'podman' or ansible_facts['virtualization_type'] == 'docker' }}"
 
 - name: Generate Fluent Bit main configuration
   ansible.builtin.template:
@@ -64,7 +64,7 @@
 
     - name: Calculate database age in seconds
       ansible.builtin.set_fact:
-        __fluentbit_geoip_age: "{{ ((ansible_date_time.epoch | int) - (__fluentbit_geoip_existing.stat.mtime | int)) if __fluentbit_geoip_existing.stat.exists else 864001 }}"
+        __fluentbit_geoip_age: "{{ ((ansible_facts['date_time'].epoch | int) - (__fluentbit_geoip_existing.stat.mtime | int)) if __fluentbit_geoip_existing.stat.exists else 864001 }}"
 
     - name: Debug database age
       ansible.builtin.debug:
@@ -152,4 +152,4 @@
     name: fluent-bit
     state: started
     enabled: true
-  ignore_errors: "{{ ansible_virtualization_type == 'podman' or ansible_virtualization_type == 'docker' }}"
+  ignore_errors: "{{ ansible_facts['virtualization_type'] == 'podman' or ansible_facts['virtualization_type'] == 'docker' }}"
