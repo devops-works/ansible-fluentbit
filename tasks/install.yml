@@ -15,35 +15,36 @@
     mode: '0644'
   when: ansible_os_family == "Debian"
 
-- name: Remove old Fluent Bit repository line (Debian)
-  ansible.builtin.lineinfile:
-    path: /etc/apt/sources.list.d/packages_fluentbit_io_debian_{{ ansible_distribution_release }}.list
-    regexp: '^deb https://packages.fluentbit.io/debian/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main$'
+- name: Remove legacy one-line Fluent Bit repository files
+  ansible.builtin.file:
+    path: "/etc/apt/sources.list.d/packages_fluentbit_io_{{ item }}_{{ ansible_distribution_release }}.list"
     state: absent
-  when: ansible_distribution == "Debian"
+  loop:
+    - debian
+    - ubuntu
+  when: ansible_os_family == "Debian"
+  notify: Update apt cache
 
-- name: Remove old Fluent Bit repository line (Ubuntu)
-  ansible.builtin.lineinfile:
-    path: /etc/apt/sources.list.d/packages_fluentbit_io_ubuntu_{{ ansible_distribution_release }}.list
-    regexp: '^deb https://packages.fluentbit.io/ubuntu/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main$'
-    state: absent
-  when: ansible_distribution == "Ubuntu"
-
-- name: Add Fluent Bit repository (Ubuntu)
-  ansible.builtin.apt_repository:
-    repo: "deb [signed-by=/etc/apt/keyrings/fluentbit.asc] https://packages.fluentbit.io/ubuntu/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main"
+- name: Install python-debian (required by deb822_repository)
+  ansible.builtin.apt:
+    name: python3-debian
     state: present
-    update_cache: true
-    filename: "packages_fluentbit_io_ubuntu_{{ ansible_distribution_release }}"
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_os_family == "Debian"
 
-- name: Add Fluent Bit repository (Debian)
-  ansible.builtin.apt_repository:
-    repo: "deb [signed-by=/etc/apt/keyrings/fluentbit.asc] https://packages.fluentbit.io/debian/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main"
+- name: Add Fluent Bit repository
+  ansible.builtin.deb822_repository:
+    name: fluentbit
+    types: deb
+    uris: "https://packages.fluentbit.io/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}"
+    suites: "{{ ansible_distribution_release }}"
+    components: main
+    signed_by: /etc/apt/keyrings/fluentbit.asc
     state: present
-    update_cache: true
-    filename: "packages_fluentbit_io_debian_{{ ansible_distribution_release }}"
-  when: ansible_distribution == "Debian"
+  when: ansible_distribution in ["Debian", "Ubuntu"]
+  notify: Update apt cache
+
+- name: Update apt cache before install
+  ansible.builtin.meta: flush_handlers
 
 - name: Install Fluent Bit package
   ansible.builtin.package:

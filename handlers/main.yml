@@ -1,6 +1,11 @@
 ---
 # handlers file for ansible-fluentbit
   
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+  listen: "Update apt cache"
+
 - name: Restart fluent-bit
   ansible.builtin.systemd:
     name: fluent-bit
